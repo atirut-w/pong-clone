@@ -8,3 +8,4 @@ add_executable("pongclone"
 )
 target_include_directories("pongclone" PRIVATE "include")
 target_link_libraries("pongclone" PRIVATE "raylib" "nodetree")
+target_compile_features("pongclone" PRIVATE "cxx_std_17")

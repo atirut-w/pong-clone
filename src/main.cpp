@@ -62,21 +62,33 @@ public:
     {
         Node::update(delta);
 
-        position.x += velocity.x * delta;
-        position.y += velocity.y * delta;
-
         // Vertical bounce
         if (position.y <= 0 || position.y >= GetScreenHeight() - size.y)
         {
             velocity.y = -velocity.y;
         }
 
-        // Paddle check
-        if (CheckCollisionRecs({ position.x, position.y, size.x, size.y }, { p1->position.x, p1->position.y, p1->size.x, p1->size.y }) ||
-            CheckCollisionRecs({ position.x, position.y, size.x, size.y }, { p2->position.x, p2->position.y, p2->size.x, p2->size.y }))
+        // Paddle collision
+        // We have to check on separate axes because checking for "any collision
+        // with the paddles" and inverting X velocity can cause a nasty bug when
+        // the ball collide with the paddles on the Y axis.
+
+        Rectangle p1_rect = { p1->position.x, p1->position.y, p1->size.x, p1->size.y };
+        Rectangle p2_rect = { p2->position.x, p2->position.y, p2->size.x, p2->size.y };
+
+        Rectangle new_x = { position.x + velocity.x * delta, position.y, size.x, size.y };
+        if (CheckCollisionRecs(new_x, p1_rect) || CheckCollisionRecs(new_x, p2_rect))
         {
             velocity.x = -velocity.x;
         }
+        Rectangle new_y = { position.x, position.y + velocity.y * delta, size.x, size.y };
+        if (CheckCollisionRecs(new_y, p1_rect) || CheckCollisionRecs(new_y, p2_rect))
+        {
+            velocity.y = -velocity.y;
+        }
+
+        position.x += velocity.x * delta;
+        position.y += velocity.y * delta;
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
     }

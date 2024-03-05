@@ -41,7 +41,7 @@ class Paddle : public Node2D
 {
 public:
     Vector2 size = { 15, 100 };
-    float speed = 200;
+    float speed = 300;
     KeyboardKey up_key;
     KeyboardKey down_key;
     

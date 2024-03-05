@@ -3,12 +3,26 @@
 #include <algorithm>
 #include <random>
 #include <array>
+#include <fstream>
 
 std::shared_ptr<NodeTree::Node> current;
 std::shared_ptr<NodeTree::Node> start = std::make_shared<NodeTree::Node>();
 std::shared_ptr<NodeTree::Node> gameplay = std::make_shared<NodeTree::Node>();
 
 std::array<int, 2> scores = { 0, 0 };
+
+int score_p1 = 0;
+int score_p2 = 0;
+
+void add_score_p1()
+{
+    score_p1++;
+}
+
+void add_score_p2()
+{
+    score_p2++;
+}
 
 class StartScreenController : public NodeTree::Node
 {
@@ -80,11 +94,13 @@ public:
         if (CheckCollisionRecs(new_x, p1_rect) || CheckCollisionRecs(new_x, p2_rect))
         {
             velocity.x = -velocity.x;
+            add_score_p1();
         }
         Rectangle new_y = { position.x, position.y + velocity.y * delta, size.x, size.y };
         if (CheckCollisionRecs(new_y, p1_rect) || CheckCollisionRecs(new_y, p2_rect))
         {
             velocity.y = -velocity.y;
+            add_score_p2();
         }
 
         position.x += velocity.x * delta;
@@ -130,6 +146,12 @@ void init_scenes()
     current = gameplay; // for testing
 }
 
+void show_scores()
+{
+    DrawText(std::to_string(score_p1).c_str(), 100, 10, 30, WHITE);
+    DrawText(std::to_string(score_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
+}
+
 int main()
 {
     InitWindow(640, 480, "Pong Clone");
@@ -143,7 +165,17 @@ int main()
         ClearBackground(BLACK);
 
         current->update(GetFrameTime());
+        show_scores();
         EndDrawing();
+    }
+    
+    // เขียนไฟล์เก็บคะแนน
+    std::ofstream file("scores.txt");
+    if (file.is_open())
+    {
+        file << "Player 1: " << score_p1 << "\n";
+        file << "Player 2: " << score_p2 << "\n";
+        file.close();
     }
     
     return 0;

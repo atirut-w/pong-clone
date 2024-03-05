@@ -119,14 +119,14 @@ public:
         position.x += velocity.x * delta;
         position.y += velocity.y * delta;
 
-        if (position.x < 0 || position.x + size.x > GetScreenWidth())
+        if (position.x + size.x < 0 || position.x > GetScreenWidth())
         {
             // We're out of bound, check which side and add a point
-            if (position.x < 0)
+            if (position.x + size.x < 0)
             {
                 add_score_p2();
             }
-            else if (position.x + size.x > GetScreenWidth())
+            else if (position.x > GetScreenWidth())
             {
                 add_score_p1();
             }

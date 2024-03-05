@@ -3,12 +3,26 @@
 #include <algorithm>
 #include <random>
 #include <array>
+#include <fstream>
 
 std::shared_ptr<NodeTree::Node> current;
 std::shared_ptr<NodeTree::Node> start = std::make_shared<NodeTree::Node>();
 std::shared_ptr<NodeTree::Node> gameplay = std::make_shared<NodeTree::Node>();
 
 std::array<int, 2> scores = { 0, 0 };
+
+int score_p1 = 0;
+int score_p2 = 0;
+
+void add_score_p1()
+{
+    score_p1++;
+}
+
+void add_score_p2()
+{
+    score_p2++;
+}
 
 class StartScreenController : public NodeTree::Node
 {
@@ -54,10 +68,23 @@ class Ball : public Node2D
 {
 public:
     Vector2 size = { 15, 15 };
-    Vector2 velocity = { 200, 200 };
+    Vector2 velocity;
     float speed_increment = 25;
     std::shared_ptr<Paddle> p1;
     std::shared_ptr<Paddle> p2;
+
+    Ball()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        position = { (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
+        velocity = { 200, 200 };
+        velocity.x = rand() % 2 == 0 ? velocity.x : -velocity.x;
+        velocity.y = rand() % 2 == 0 ? velocity.y : -velocity.y;
+    }
 
     void update(float delta) override
     {
@@ -92,6 +119,21 @@ public:
         position.x += velocity.x * delta;
         position.y += velocity.y * delta;
 
+        if (position.x < 0 || position.x + size.x > GetScreenWidth())
+        {
+            // We're out of bound, check which side and add a point
+            if (position.x < 0)
+            {
+                add_score_p2();
+            }
+            else if (position.x + size.x > GetScreenWidth())
+            {
+                add_score_p1();
+            }
+
+            reset();
+        }
+
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
     }
 };
@@ -121,15 +163,18 @@ void init_scenes()
     gameplay->add_child(p2);
 
     auto ball = std::make_shared<Ball>();
-    ball->position = { (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
     ball->p1 = p1;
     ball->p2 = p2;
-    ball->velocity.x = rand() % 2 == 0 ? ball->velocity.x : -ball->velocity.x;
-    ball->velocity.y = rand() % 2 == 0 ? ball->velocity.y : -ball->velocity.y;
     gameplay->add_child(ball);
 
     // current = start;
     current = gameplay; // for testing
+}
+
+void show_scores()
+{
+    DrawText(std::to_string(score_p1).c_str(), 100, 10, 30, WHITE);
+    DrawText(std::to_string(score_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
 }
 
 int main()
@@ -145,7 +190,17 @@ int main()
         ClearBackground(BLACK);
 
         current->update(GetFrameTime());
+        show_scores();
         EndDrawing();
+    }
+    
+    // เขียนไฟล์เก็บคะแนน
+    std::ofstream file("scores.txt");
+    if (file.is_open())
+    {
+        file << "Player 1: " << score_p1 << "\n";
+        file << "Player 2: " << score_p2 << "\n";
+        file.close();
     }
     
     return 0;

@@ -55,6 +55,7 @@ class Ball : public Node2D
 public:
     Vector2 size = { 15, 15 };
     Vector2 velocity = { 200, 200 };
+    float speed_increment = 25;
     std::shared_ptr<Paddle> p1;
     std::shared_ptr<Paddle> p2;
 
@@ -80,6 +81,7 @@ public:
         if (CheckCollisionRecs(new_x, p1_rect) || CheckCollisionRecs(new_x, p2_rect))
         {
             velocity.x = -velocity.x;
+            velocity.x += velocity.x < 0 ? -speed_increment : speed_increment;
         }
         Rectangle new_y = { position.x, position.y + velocity.y * delta, size.x, size.y };
         if (CheckCollisionRecs(new_y, p1_rect) || CheckCollisionRecs(new_y, p2_rect))

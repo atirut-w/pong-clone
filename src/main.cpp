@@ -68,9 +68,22 @@ class Ball : public Node2D
 {
 public:
     Vector2 size = { 15, 15 };
-    Vector2 velocity = { 200, 200 };
+    Vector2 velocity;
     std::shared_ptr<Paddle> p1;
     std::shared_ptr<Paddle> p2;
+
+    Ball()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        position = { (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
+        velocity = { 200, 200 };
+        velocity.x = rand() % 2 == 0 ? velocity.x : -velocity.x;
+        velocity.y = rand() % 2 == 0 ? velocity.y : -velocity.y;
+    }
 
     void update(float delta) override
     {
@@ -94,17 +107,30 @@ public:
         if (CheckCollisionRecs(new_x, p1_rect) || CheckCollisionRecs(new_x, p2_rect))
         {
             velocity.x = -velocity.x;
-            add_score_p1();
         }
         Rectangle new_y = { position.x, position.y + velocity.y * delta, size.x, size.y };
         if (CheckCollisionRecs(new_y, p1_rect) || CheckCollisionRecs(new_y, p2_rect))
         {
             velocity.y = -velocity.y;
-            add_score_p2();
         }
 
         position.x += velocity.x * delta;
         position.y += velocity.y * delta;
+
+        if (position.x < 0 || position.x + size.x > GetScreenWidth())
+        {
+            // We're out of bound, check which side and add a point
+            if (position.x < 0)
+            {
+                add_score_p2();
+            }
+            else if (position.x + size.x > GetScreenWidth())
+            {
+                add_score_p1();
+            }
+
+            reset();
+        }
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
     }
@@ -135,11 +161,8 @@ void init_scenes()
     gameplay->add_child(p2);
 
     auto ball = std::make_shared<Ball>();
-    ball->position = { (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
     ball->p1 = p1;
     ball->p2 = p2;
-    ball->velocity.x = rand() % 2 == 0 ? ball->velocity.x : -ball->velocity.x;
-    ball->velocity.y = rand() % 2 == 0 ? ball->velocity.y : -ball->velocity.y;
     gameplay->add_child(ball);
 
     // current = start;

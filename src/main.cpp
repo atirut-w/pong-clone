@@ -11,17 +11,20 @@ std::shared_ptr<NodeTree::Node> gameplay = std::make_shared<NodeTree::Node>();
 
 std::array<int, 2> scores = { 0, 0 };
 
-int score_p1 = 0;
-int score_p2 = 0;
+int score_p1 = 3;
+int score_p2 = 3;
+int attack_p1 = 1;
+int attack_p2 = 1;
+
 
 void add_score_p1()
 {
-    score_p1++;
+    score_p2 = score_p2-attack_p1;
 }
 
 void add_score_p2()
 {
-    score_p2++;
+    score_p1 = score_p1-attack_p1;
 }
 
 class StartScreenController : public NodeTree::Node
@@ -61,6 +64,16 @@ public:
         position.y = std::clamp(position.y, 10.0f, GetScreenHeight() - size.y - 10.0f);
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
+         if(score_p1 == 0)
+        {
+            speed= 0;
+              printf("test1");
+        }
+        if(score_p2 == 0)
+        {
+            speed= 0;
+            printf("test2");
+        }
     }
 };
 
@@ -69,7 +82,7 @@ class Ball : public Node2D
 public:
     Vector2 size = { 15, 15 };
     Vector2 velocity;
-    float speed_increment = 25;
+    float speed_increment = 35;
     std::shared_ptr<Paddle> p1;
     std::shared_ptr<Paddle> p2;
 
@@ -135,6 +148,17 @@ public:
         }
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
+        if(score_p1 == 0)
+        {
+            velocity= {0,0};
+             
+        }
+        if(score_p2 == 0)
+        {
+            velocity= {0,0};
+           
+            
+        }
     }
 };
 
@@ -192,6 +216,7 @@ int main()
         current->update(GetFrameTime());
         show_scores();
         EndDrawing();
+       
     }
     
     // เขียนไฟล์เก็บคะแนน
@@ -202,6 +227,7 @@ int main()
         file << "Player 2: " << score_p2 << "\n";
         file.close();
     }
+    
     
     return 0;
 }

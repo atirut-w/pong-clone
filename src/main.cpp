@@ -65,15 +65,6 @@ public:
         position.y = std::clamp(position.y, 10.0f, GetScreenHeight() - size.y - 10.0f);
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
-         if(score_p1 == 0)
-        {
-            speed= 0;
-                
-        }
-        if(score_p2 == 0)
-        {
-            speed= 0;
-        }
     }
 };
 
@@ -148,16 +139,9 @@ public:
         }
 
         DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
-        if(score_p1 == 0)
+        if(score_p1 == 0 || score_p2 == 0)
         {
-            velocity= {0,0};
-             
-        }
-        if(score_p2 == 0)
-        {
-            velocity= {0,0};
-           
-            
+            current = endgame;
         }
     }
 };
@@ -170,11 +154,11 @@ class endgame101 : public NodeTree::Node
         {
             score_p1 = 3;
             score_p2 = 3;
-            
+            current = gameplay;
         }
         else if (IsKeyPressed(KEY_ZERO))
         {
-            CloseWindow();
+            exit(0);
         }
     }
 };

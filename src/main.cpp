@@ -113,11 +113,14 @@ public:
         {
             velocity.x = -velocity.x;
             velocity.x += velocity.x < 0 ? -speed_increment : speed_increment;
+            velocity.y += velocity.y < 0 ? -speed_increment : speed_increment;
         }
         Rectangle new_y = { position.x, position.y + velocity.y * delta, size.x, size.y };
         if (CheckCollisionRecs(new_y, p1_rect) || CheckCollisionRecs(new_y, p2_rect))
         {
             velocity.y = -velocity.y;
+            velocity.x += velocity.x < 0 ? -speed_increment : speed_increment;
+            velocity.y += velocity.y < 0 ? -speed_increment : speed_increment;
         }
 
         position.x += velocity.x * delta;

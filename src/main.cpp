@@ -25,8 +25,7 @@ void sevescore()
     std::ofstream file("scores.txt");
     if (file.is_open())
     {
-        file << score_p1;
-        file << score_p2;
+        file << score_p1 << " " << score_p2 << std::endl;
         file.close();
     }
 }
@@ -260,8 +259,7 @@ int main()
        
     }
     
-    
-    
+    sevescore();
     
     return 0;
 }

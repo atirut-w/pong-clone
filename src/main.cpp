@@ -8,13 +8,14 @@
 std::shared_ptr<NodeTree::Node> current;
 std::shared_ptr<NodeTree::Node> start = std::make_shared<NodeTree::Node>();
 std::shared_ptr<NodeTree::Node> gameplay = std::make_shared<NodeTree::Node>();
-
 std::array<int, 2> scores = { 0, 0 };
+std::shared_ptr<NodeTree::Node> endgame = std::make_shared<NodeTree::Node>();
 
 int score_p1 = 3;
 int score_p2 = 3;
 int attack_p1 = 1;
 int attack_p2 = 1;
+int j = 1;
 
 
 void add_score_p1()
@@ -67,12 +68,11 @@ public:
          if(score_p1 == 0)
         {
             speed= 0;
-              printf("test1");
+                
         }
         if(score_p2 == 0)
         {
             speed= 0;
-            printf("test2");
         }
     }
 };
@@ -161,9 +161,31 @@ public:
         }
     }
 };
+class endgame101 : public NodeTree::Node
+{
+    public:
+    void update(float delta) override
+    {
+        if(IsKeyPressed(KEY_ONE))
+        {
+            score_p1 = 3;
+            score_p2 = 3;
+            
+        }
+        else if (IsKeyPressed(KEY_ZERO))
+        {
+            CloseWindow();
+        }
+    }
+};
 
 void init_scenes()
 {
+    auto endgame_text =std::make_shared<Label>();
+    endgame_text->text =" \n \n       Want to start a new game, press 1. Want to exit the game press 0\n";
+    endgame_text-> font_size = 18;
+    endgame->add_child(endgame_text);
+    endgame-> add_child (std::make_shared<endgame101>());
     start->add_child(std::make_shared<StartScreenController>());
 
     auto intro_text = std::make_shared<Label>();
@@ -192,7 +214,7 @@ void init_scenes()
     gameplay->add_child(ball);
 
     // current = start;
-    current = gameplay; // for testing
+    current = endgame; // for testing
 }
 
 void show_scores()

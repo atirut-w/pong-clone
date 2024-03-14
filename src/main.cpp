@@ -11,21 +11,34 @@ std::shared_ptr<NodeTree::Node> gameplay = std::make_shared<NodeTree::Node>();
 std::array<int, 2> scores = { 0, 0 };
 std::shared_ptr<NodeTree::Node> endgame = std::make_shared<NodeTree::Node>();
 
-int score_p1 = 3;
-int score_p2 = 3;
+int lives_p1 = 3;
+int lives_p2 = 3;
 int attack_p1 = 1;
 int attack_p2 = 1;
+int score_p1 =0;
+int score_p2 =0;
 int j = 1;
 
+void sevescore()
+{
+    // เขียนไฟล์เก็บคะแนน
+    std::ofstream file("scores.txt");
+    if (file.is_open())
+    {
+        file << score_p1;
+        file << score_p2;
+        file.close();
+    }
+}
 
 void add_score_p1()
 {
-    score_p2 = score_p2-attack_p1;
+    lives_p2 = lives_p2-attack_p1;
 }
 
 void add_score_p2()
 {
-    score_p1 = score_p1-attack_p1;
+    lives_p1 = lives_p1-attack_p1;
 }
 
 class StartScreenController : public NodeTree::Node
@@ -143,9 +156,17 @@ public:
         }
 
         DrawRectangle(position.x, position.y, size.x, size.y, {0x83, 0x59, 0xff, 0xff});
-        if(score_p1 == 0 || score_p2 == 0)
+        if(lives_p1 == 0 || lives_p2 == 0)
         {
             current = endgame;
+            if(position.x>GetScreenWidth()/2)
+            {
+                score_p1++;
+            }
+            else
+            {
+                score_p2++;
+            }
         }
     }
 };
@@ -156,12 +177,13 @@ class endgame101 : public NodeTree::Node
     {
         if(IsKeyPressed(KEY_ONE))
         {
-            score_p1 = 3;
-            score_p2 = 3;
+            lives_p1 = 3;
+            lives_p2 = 3;
             current = gameplay;
         }
         else if (IsKeyPressed(KEY_ZERO))
         {
+            sevescore();
             exit(0);
         }
     }
@@ -177,7 +199,7 @@ void init_scenes()
     start->add_child(std::make_shared<StartScreenController>());
 
     auto intro_text = std::make_shared<Label>();
-    intro_text->text = "Welcome to Pong Clone\n\n";
+    intro_text->text = "\n\n\nWelcome to Pong Clone\n\n";
     intro_text->text += "This is a simple pong game made for a university assignment.\n";
     intro_text->text += "It's very barebones, but enjoy!\n\n";
     intro_text->text += "Press Enter to start the game.";
@@ -203,18 +225,25 @@ void init_scenes()
     ball->p2 = p2;
     gameplay->add_child(ball);
 
-    // current = start;
-    current = gameplay; // for testing
+    current = start;
+   
 }
 
 void show_scores()
 {
-    DrawText(std::to_string(score_p1).c_str(), 100, 10, 30, WHITE);
-    DrawText(std::to_string(score_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
+    DrawText(std::to_string(lives_p1).c_str(), 100, 10, 30, WHITE);
+    DrawText(std::to_string(lives_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
 }
 
 int main()
 {
+    {
+        std::ifstream file("scores.txt");
+        file>>score_p1;
+        file>>score_p2;
+
+        file.close();
+    }
     InitWindow(640, 480, "Pong Clone");
     SetTargetFPS(60);
 
@@ -231,14 +260,7 @@ int main()
        
     }
     
-    // เขียนไฟล์เก็บคะแนน
-    std::ofstream file("scores.txt");
-    if (file.is_open())
-    {
-        file << "Player 1: " << score_p1 << "\n";
-        file << "Player 2: " << score_p2 << "\n";
-        file.close();
-    }
+    
     
     
     return 0;

@@ -48,6 +48,7 @@ public:
     float speed = 300;
     KeyboardKey up_key;
     KeyboardKey down_key;
+    Color color;
     
     void update(float delta) override
     {
@@ -64,7 +65,7 @@ public:
 
         position.y = std::clamp(position.y, 10.0f, GetScreenHeight() - size.y - 10.0f);
 
-        DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
+        DrawRectangle(position.x, position.y, size.x, size.y, color);
     }
 };
 
@@ -141,7 +142,7 @@ public:
             reset();
         }
 
-        DrawRectangle(position.x, position.y, size.x, size.y, WHITE);
+        DrawRectangle(position.x, position.y, size.x, size.y, {0x83, 0x59, 0xff, 0xff});
         if(score_p1 == 0 || score_p2 == 0)
         {
             current = endgame;
@@ -187,12 +188,14 @@ void init_scenes()
     p1->position = { 10, 10 };
     p1->up_key = KEY_W;
     p1->down_key = KEY_S;
+    p1->color = {0x67, 0xff, 0x59, 0xff};
     gameplay->add_child(p1);
 
     auto p2 = std::make_shared<Paddle>();
     p2->position = { GetScreenWidth() - p2->size.x - 10, 10 };
     p2->up_key = KEY_UP;
     p2->down_key = KEY_DOWN;
+    p2->color = {0xff, 0x59, 0xc8, 0xff};
     gameplay->add_child(p2);
 
     auto ball = std::make_shared<Ball>();
@@ -201,7 +204,7 @@ void init_scenes()
     gameplay->add_child(ball);
 
     // current = start;
-    current = endgame; // for testing
+    current = gameplay; // for testing
 }
 
 void show_scores()

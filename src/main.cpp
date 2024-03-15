@@ -37,7 +37,7 @@ void add_score_p1()
 
 void add_score_p2()
 {
-    lives_p1 = lives_p1-attack_p1;
+    lives_p1 = lives_p1-attack_p2;
 }
 
 class StartScreenController : public NodeTree::Node

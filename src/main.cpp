@@ -228,7 +228,7 @@ void init_scenes()
    
 }
 
-void show_scores()
+void show_lives()
 {
     DrawText(std::to_string(lives_p1).c_str(), 100, 10, 30, WHITE);
     DrawText(std::to_string(lives_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
@@ -254,7 +254,17 @@ int main()
         ClearBackground(BLACK);
 
         current->update(GetFrameTime());
-        show_scores();
+        
+        if (current == gameplay)
+        {
+            show_lives();
+        }
+        else if (current == endgame)
+        {
+            DrawText(std::to_string(score_p1).c_str(), 100, 10, 30, WHITE);
+            DrawText(std::to_string(score_p2).c_str(), GetScreenWidth() - 100, 10, 30, WHITE);
+        }
+        
         EndDrawing();
     }
     

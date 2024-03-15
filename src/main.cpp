@@ -151,22 +151,23 @@ public:
                 add_score_p1();
             }
 
+            if(lives_p1 == 0 || lives_p2 == 0)
+            {
+                current = endgame;
+                if(position.x>GetScreenWidth()/2)
+                {
+                    score_p1++;
+                }
+                else
+                {
+                    score_p2++;
+                }
+            }
+
             reset();
         }
 
         DrawRectangle(position.x, position.y, size.x, size.y, {0x83, 0x59, 0xff, 0xff});
-        if(lives_p1 == 0 || lives_p2 == 0)
-        {
-            current = endgame;
-            if(position.x>GetScreenWidth()/2)
-            {
-                score_p1++;
-            }
-            else
-            {
-                score_p2++;
-            }
-        }
     }
 };
 class endgame101 : public NodeTree::Node
@@ -256,7 +257,6 @@ int main()
         current->update(GetFrameTime());
         show_scores();
         EndDrawing();
-       
     }
     
     sevescore();

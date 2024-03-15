@@ -17,7 +17,6 @@ int attack_p1 = 1;
 int attack_p2 = 1;
 int score_p1 =0;
 int score_p2 =0;
-int j = 1;
 
 void sevescore()
 {
